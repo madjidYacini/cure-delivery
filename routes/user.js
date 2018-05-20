@@ -1,23 +1,13 @@
 import { Router } from 'express'
 import User from '../models/user'
+import UserControllers from '../controllers/user'
 
 let api = Router()
 
-api.get('/', async (req, res) => {
-  let users = await User.findAll()
-  res.json({ users })
-})
+api.get('/',UserControllers.get_user )
 
-api.post('/', async (req, res) => {
-  let { firstname, lastname, email } = req.body
-
-  try {
-    let user = new User({ firstname, lastname, email })
-    let data = await user.save()
-    res.json({ data })
-  } catch (error) {
-    res.json({ error })
-  }
-})
+// api.post('/', Controllers.set_user)
+api.post('/signup',UserControllers.user_signup);
+api.post('/login',UserControllers.user_login)
 
 export default api
