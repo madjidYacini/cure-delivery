@@ -34,9 +34,7 @@ module.exports = (sequelize, DataTypes) => {
    password: {
      type: DataTypes.STRING,
      required: true,
-     validate: {
-       len: [5, 20],
-     }
+    
    },
   }, {
     classMethods: {
