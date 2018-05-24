@@ -1,4 +1,4 @@
-import User from "../models/user";
+import { User } from "../models";
 import bcrypt from "bcrypt";
 import passport from "passport";
 
@@ -14,56 +14,83 @@ exports.get_user= async(req, res) => {
     })
   }
 }
-exports.user_signup =  async (req, res) =>{
+exports.user_signup =   (req, res) =>{
  
     let email = req.body.email
     // let user = new User({ firstname, lastname, email });    
     // console.log("madjid",user);
-   await User.find({where:{email : email}})
-    .then(user =>{
-      // console.log(user.length);
-      if (user) {
-         return res.status(409).json({
-                message :"user already exists"
-            })
-      }else{
-       bcrypt.hash(req.body.password,10,(err,hash)=>{
-         if(err){
-           res.status(500).json({
-             error :err
-           })
-         }else{
-         
-         try{
-          let { firstname, lastname, email, address, password } = req.body;
-           let passwordConfirm = req.body.passwordConfirm
-          console.log(passwordConfirm);
-          console.log(password.localeCompare(passwordConfirm));         
-          var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
-          const nameRegex = new RegExp("^[_A-z]*((-|s)*[_A-z])*$");
-          req.checkBody("firstname", "firstname is required").notEmpty();
-          req.checkBody("firstname", "firstname should have juste letters.").matches(nameRegex);
+    console.log(email)
 
-          req.checkBody("email", "Email is required").notEmpty();
+    const user = User.findAll()
 
-          req.checkBody("lastname", "lastname is required").notEmpty();
-          req.checkBody("lastname", "lastname should have juste letters.").matches(nameRegex);
-          
-          req.checkBody("address", "address is required").notEmpty();
-          
-          req.checkBody("password", "password is required").notEmpty();
-          req.checkBody("password", "password should have at least , one uppercase , lowercase and a number and at least 8 chars").matches(passwordRegex);         
-          
-          req.checkBody("passwordConfirm", "password2 is required").notEmpty();
-          req.checkBody("passwordConfirm", "passwords do not match").equals(password);
+    console.log('user is', user)
 
-           let errors = req.validationErrors();
 
-          if (errors) {
-            res.status(409).json({
-                message: errors,
-              });
-          }else {
+
+
+      ({ where: { email: email } })
+      .then(user => {
+        // console.log(user.length);
+        if (user) {
+          return res.status(409).json({ message: "user already exists" });
+        } else {
+          bcrypt.hash(req.body.password, 10, (err, hash) => {
+            if (err) {
+              res.status(500).json({ error: err });
+            } else {
+              try {
+                let { firstname, lastname, email, address, password } = req.body;
+                let passwordConfirm = req.body.passwordConfirm;
+                console.log(passwordConfirm);
+                console.log(password.localeCompare(passwordConfirm));
+                var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
+                const nameRegex = new RegExp("^[_A-z]*((-|s)*[_A-z])*$");
+                req
+                  .checkBody("firstname", "firstname is required")
+                  .notEmpty();
+                req
+                  .checkBody(
+                    "firstname",
+                    "firstname should have juste letters."
+                  )
+                  .matches(nameRegex);
+
+                req.checkBody("email", "Email is required").notEmpty();
+
+                req
+                  .checkBody("lastname", "lastname is required")
+                  .notEmpty();
+                req
+                  .checkBody(
+                    "lastname",
+                    "lastname should have juste letters."
+                  )
+                  .matches(nameRegex);
+
+                req.checkBody("address", "address is required").notEmpty();
+
+                req
+                  .checkBody("password", "password is required")
+                  .notEmpty();
+                req
+                  .checkBody(
+                    "password",
+                    "password should have at least , one uppercase , lowercase and a number and at least 8 chars"
+                  )
+                  .matches(passwordRegex);
+
+                req
+                  .checkBody("passwordConfirm", "password2 is required")
+                  .notEmpty();
+                req
+                  .checkBody("passwordConfirm", "passwords do not match")
+                  .equals(password);
+
+                let errors = req.validationErrors();
+
+                if (errors) {
+                  res.status(409).json({ message: errors });
+                } else {
                   //  console.log(password.match(passwordRegex))
                   let user = new User({
                     firstname,
@@ -78,7 +105,9 @@ exports.user_signup =  async (req, res) =>{
                   try {
                     let data = user.save();
 
-                    res.status(200).json({
+                    res
+                      .status(200)
+                      .json({
                         message: "user created",
                         user: user
                       });
@@ -87,14 +116,13 @@ exports.user_signup =  async (req, res) =>{
                     res.status(500).json({ error: err });
                   }
                 }
-        }catch(err){
-          console.log(err);
+              } catch (err) {
+                console.log(err);
+              }
+            }
+          });
         }
-       
-         }
-       })
-      }
-    })
+      });
   
 }
 exports.user_login =  (req, res, next) => {

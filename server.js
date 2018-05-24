@@ -8,7 +8,7 @@ import "colors";
 import dotenv from "dotenv";
 dotenv.config();
 
-import { db } from "./models";
+import db from "./models";
 
 import routes from "./routes";
 
@@ -47,7 +47,7 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extend: true }));
 
-// db.sync().then(() => {
+db.sequelize.sync({force: true}).then(() => {
   app.use("/api", routes);
 
   app.listen(process.env.PORT, err => {
@@ -58,4 +58,4 @@ app.use(bodyParser.urlencoded({ extend: true }));
 
     console.log(`Server is running at port ${process.env.PORT}`.cyan);
   });
-// });
+});
