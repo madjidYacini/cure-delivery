@@ -14,6 +14,30 @@ module.exports = {
       state_livraison: {
         type: Sequelize.ENUM("LIVRE", "NON-LIVRE")
       },
+      UserId: {
+        type: Sequelize.INTEGER,
+        onDelete: "CASCADE",
+        references: {
+          model: "User",
+          key: "id"
+        }
+      },
+      OrdonanceId: {
+        type: Sequelize.INTEGER,
+        onDelete: "CASCADE",
+        references: {
+          model: "Ordonances",
+          key: "id"
+        }
+      },
+      PharmacieId: {
+        type: Sequelize.INTEGER,
+        onDelete: "CASCADE",
+        references: {
+          model: "Pharmacie",
+          key: "id"
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

@@ -1,16 +1,23 @@
-import  LocalStrategy from ("passport-local").Strategy;
+  // LocalStrategy from "passport-local".Strategy;
+  import passport from "passport";
+        const LocalStrategy = require("passport-local").Strategy;
 
-import  User  from "../models/user";
-import bcrypt from ("bcryptjs");
+import  User  from "../models/user.js";
+import bcrypt from "bcryptjs";
 
-module.exports = passport => {
+// module.exports = passport => {
   // local strategy
   passport.use(
-    new LocalStrategy((email, password, done) => {
-      // match email
-      let query = { username: username };
-      User.findOne(query, (err, user) => {
+    new LocalStrategy((email, password, done) => {   
+      console.log("test")    
+      User.findOne({
+          email : email
+        
+      }, (err, user) => {
         if (err) {
+          // console.log(err);
+       
+          console.log(user);
           return done(err);
         }
         if (!user) {
@@ -35,9 +42,9 @@ module.exports = passport => {
     done(null, user.id);
   });
 
-  passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
+  passport.deserializeUser(function(user, done) {
+    User.find({where : {id : user.id}}, function(err, user) {
       done(err, user);
     });
   });
-};
+// };

@@ -33,7 +33,10 @@ fs
   });
 
 Object.keys(db).forEach(modelName => {
+  console.log("object key");
+  console.log(modelName);
   if (db[modelName].associate) {
+    console.log("name is", modelName);
     db[modelName].associate(db);
   }
 });

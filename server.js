@@ -2,47 +2,60 @@ import express from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import expressValidator from "express-validator";
-
+import passport from "passport";
+import session from "express-session";
 import "colors";
 import dotenv from "dotenv";
 dotenv.config();
 
-const app = express();
-
-app.use(morgan("dev"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-
-import { db } from "./models";
+import db from "./models";
 
 import routes from "./routes";
 
-// app.use(
-//   expressValidator({
-//     errorFormatter: function(param, msg, value) {
-//       var namespace = param.split("."),
-//         root = namespace.shift(),
-//         formParam = root;
+const app = express();
 
-//       while (namespace.length) {
-//         formParam += "{" + namespace.shift() + "}";
-//       }
-//       return {
-//         param: formParam,
-//         msg: msg
-//       };
-//     }
-//   })
-// );
+app.use(
+  expressValidator({
+    errorFormatter: function(param, msg, value) {
+      var namespace = param.split("."),
+        root = namespace.shift(),
+        formParam = root;
 
-// db.sync({ force: true }).then(() => {
-app.use("/api", routes);
+      while (namespace.length) {
+        formParam += "{" + namespace.shift() + "}";
+      }
+      return {
+        param: formParam,
+        msg: msg
+      };
+    }
+  })
+);
+require("./middleware/passport");
 
-app.listen(process.env.PORT, err => {
-  if (err) {
-    console.log(err.red);
-    process.exit(1);
-  }
-  console.log(`Server is running at port ${process.env.PORT}`.cyan);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: true,
+    saveUninitialized: true
+  })
+);
+
+app.use(morgan("dev"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extend: true }));
+
+db.sequelize.sync({}).then(() => {
+  app.use("/api", routes);
+
+  app.listen(process.env.PORT, err => {
+    if (err) {
+      console.log(err.red);
+      process.exit(1);
+    }
+
+    console.log(`Server is running at port ${process.env.PORT}`.cyan);
+  });
 });
-// });
