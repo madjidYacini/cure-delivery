@@ -130,6 +130,7 @@ exports.user_informations = async (req, res, next) => {
 exports.user_update_info = async (req, res, next) => {
   const id = req.params.id;
   // console.log(req.body)
+
   const updateOps = {};
   for (const [key, value] of Object.entries(req.body)) {
     updateOps[key] = value;

@@ -47,7 +47,11 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extend: true }));
 
+<<<<<<< HEAD
 db.sequelize.sync({}).then(() => {
+=======
+db.sequelize.sync().then(() => {
+>>>>>>> 5576f0fbaf5d2992aacc98712d565747f435e5f4
   app.use("/api", routes);
 
   app.listen(process.env.PORT, err => {
