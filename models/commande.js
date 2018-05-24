@@ -1,11 +1,17 @@
-'use strict';
+"use strict";
 module.exports = (sequelize, DataTypes) => {
-  var Commande = sequelize.define('Commande', {}, {
-    classMethods: {
-      associate: function(models) {
-        // associations can be defined here
+  const Commande = sequelize.define(
+    "Commande",
+    {},
+    {
+      classMethods: {
+        associate: function(models) {
+          Commande.belongsTo(models.User);
+          Commande.belongsTo(models.Ordonances);
+          Commande.belongsTo(models.Pharmacie);
+        }
       }
     }
-  });
+  );
   return Commande;
 };

@@ -1,12 +1,18 @@
-'use strict';
+"use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Commandes', {
+    return queryInterface.createTable("Commandes", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
+      },
+      total_price: {
+        type: Sequelize.INTEGER
+      },
+      state_livraison: {
+        type: Sequelize.ENUM("LIVRE", "NON-LIVRE")
       },
       createdAt: {
         allowNull: false,
@@ -19,6 +25,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Commandes');
+    return queryInterface.dropTable("Commandes");
   }
 };

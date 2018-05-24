@@ -1,6 +1,6 @@
 import { Router } from "express";
 import User from "../models/user";
-import UserControllers from "../controllers/user";
+import UserControllers from "../controllers/userController";
 
 let api = Router();
 
