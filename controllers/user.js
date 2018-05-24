@@ -1,5 +1,7 @@
 import User from "../models/user";
 import bcrypt from "bcrypt";
+import passport from "passport";
+
 
 exports.get_user= async(req, res) => {
     try{
@@ -12,10 +14,6 @@ exports.get_user= async(req, res) => {
     })
   }
 }
-
-
-
-
 exports.user_signup =  async (req, res) =>{
  
     let email = req.body.email
@@ -99,37 +97,63 @@ exports.user_signup =  async (req, res) =>{
     })
   
 }
+exports.user_login =  (req, res, next) => {
+     passport.authenticate("local", {
+    successRedirect: "/api/",
+    failureRedirect: "/api/users/login"
+    })(req, res, next);
+};
 
-exports.user_login = async(req,res)=>{
-  let email = req.body.email
-    // let user = new User({ firstname, lastname, email });    
-    // console.log("madjid",user);
-   await User.find({where:{email : email}})
-    .then(user =>{
-      // console.log(user.length);
-      if (!user) {
-           return res.status(409).json({
-                message :"user doesn't exists"
-            })
+
+
+exports.user_informations = async(req,res,next)=>{
+  
+     try {
+          let user = await User.find({where : {id : req.params.id}})
+          if (user) {
+          res.status(200).json({
+          message : "there are your information",
+          user : user
+        })
         }else{
-      //  TODO  passport.js and login
-       
-          let {email , password}= req.body
-      }
-  })
+        console.log('merde')
+        }
+      }catch(err){
+      console.log(err)
+    }
 }
 
 
+// probleme de l'updtae a soulever demain avec majdi 
 
-exports.set_user = async (req, res) => {
-  let { firstname, lastname, email } = req.body;
-
-  try {
-    let user = new User({ firstname, lastname, email });
-    let data = await user.save();
-    res.status(200).json({ data });
-  } catch (error) {
-    console.log(error);
-    res.json({ error });
+exports.user_update_info = async (req, res, next)=>{
+  const id = req.params.id
+  // console.log(req.body)
+  const updateOps = {};
+  for (const [key,value] of Object.entries (req.body)) {
+    updateOps[key] = value; 
   }
-};
+
+ User.update(updateOps, { where: { id: req.params.id } })
+   .then(result => {
+     console.log(result);
+     console.log(result);
+     res
+       .status(200)
+       .json({
+         message: "prodcut updated",
+         request: {
+           type: "GET",
+           desc: "view the product",
+           url: "http://localhost:3000/products/" + id
+         }
+       });
+   })
+   .catch(err => {
+     res.status(500).json({ error: err });
+   });
+
+
+// console.log(Array.isArray(ar));
+}
+

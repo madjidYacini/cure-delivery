@@ -2,7 +2,8 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import expressValidator from "express-validator"
-
+import passport from "passport"
+import session from 'express-session'
 import 'colors'
 import dotenv from 'dotenv'
 dotenv.config()
@@ -31,11 +32,23 @@ app.use(
     }
   })
 );
+require("./middleware/passport");
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: true,
+    saveUninitialized: true
+  })
+);
+
 app.use(morgan("dev"));
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extend: false }))
+app.use(bodyParser.urlencoded({ extend: true }))
 
-db.sync({force:true}).then(() => {
+db.sync().then(() => {
   app.use('/api', routes)
 
   app.listen(process.env.PORT, err => {
