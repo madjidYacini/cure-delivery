@@ -1,5 +1,5 @@
 "use strict";
-const bcrypt = require("bcrypt");
+import { bcrypt } from "../middleware/bcrypt";
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
