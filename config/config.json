@@ -2,7 +2,7 @@
   "development": {
     "username": "postgres",
     "password": null,
-    "database": "cure_delivery",
+    "database": "cure-delivery",
     "host": "127.0.0.1",
     "dialect": "postgres"   
   },

@@ -187,33 +187,86 @@ exports.user_login = (req, res, next) => {
 //   }
 // };
 
-// probleme de l'updtae a soulever demain avec majdi
+User.update(updateOps, { where: { id: req.params.id } })
+  .then(result => {
+    console.log(result);
+    console.log(result);
+    res.status(200).json({
+      message: "profil updated"
+    });
+  })
+  .catch(err => {
+    res.status(500).json({ error: err });
+  });
 
-// exports.user_update_info = async (req, res, next) => {
-//   const id = req.params.id;
-//   // console.log(req.body)
+// console.log(Array.isArray(ar));
 
-//   const updateOps = {};
-//   for (const [key, value] of Object.entries(req.body)) {
-//     updateOps[key] = value;
-//   }
+// recuperer l'utilisateur ---> done
+// comparer l'ancien password entré dans le form avec celui qui est en base -->done
+// modifier le password et le hasher
+exports.user_update_password = async (req, res, next) => {
+  const id = req.params.id;
+  var passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
+  try {
+    let user = await User.find({ where: { id: id } });
+    if (user) {
+      console.log(user);
+      console.log(user.password);
+      let password = req.body.password;
+      let newPassword = req.body.newPassword;
+      let newPasswordConfirm = req.body.newPasswordConfirm;
+      console.log("why", req.body.password);
+      console.log(user.password);
 
-//   User.update(updateOps, { where: { id: req.params.id } })
-//     .then(result => {
-//       console.log(result);
-//       console.log(result);
-//       res.status(200).json({
-//         message: "prodcut updated",
-//         request: {
-//           type: "GET",
-//           desc: "view the product",
-//           url: "http://localhost:3000/products/" + id
-//         }
-//       });
-//     })
-//     .catch(err => {
-//       res.status(500).json({ error: err });
-//     });
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
+        console.log(err);
+        console.log(result);
+        if (result) {
+          req.checkBody("newPassword", "password is required").notEmpty();
+          req
+            .checkBody(
+              "newPassword",
+              "password should have at least , one uppercase , lowercase and a number and at least 8 chars"
+            )
+            .matches(passwordRegex);
 
-//   // console.log(Array.isArray(ar));
-// };
+          req
+            .checkBody("newPasswordConfirm", "newPasswordConfirm is required")
+            .notEmpty();
+          req
+            .checkBody("newPasswordConfirm", "passwords do not match")
+            .equals(newPassword);
+          let errors = req.validationErrors();
+
+          if (errors) {
+            res.status(409).json({ message: errors });
+          } else {
+            console.log(newPassword);
+            bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
+              if (err) {
+                res.status(500).json({ error: err });
+              } else {
+                User.update({ password: hash }, { where: { id: id } });
+                res.status(200).json({
+                  message: "password updated"
+                });
+              }
+            });
+          }
+        } else {
+          if (err) {
+            res.status(500).json({
+              message: "system Error"
+            });
+          } else {
+            res.status(401).json({
+              message: "wrong password, try again"
+            });
+          }
+        }
+      });
+    }
+  } catch (error) {
+    console.log(err);
+  }
+};
