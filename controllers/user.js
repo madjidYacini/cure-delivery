@@ -1,5 +1,5 @@
 import { User } from "../models";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import passport from "passport";
 import jwt from "jwt-simple";
 import { secret } from "../config";
@@ -48,112 +48,112 @@ exports.user_signup = (req, res) => {
     if (user) {
       return res.status(409).json({ message: "user already exists" });
     } else {
-      bcrypt.hash(req.body.password, 10, (err, hash) => {
-        if (err) {
-          res.status(500).json({ error: err });
-        } else {
-          try {
-            let {
+      // bcrypt.hash(req.body.password, 10, (err, hash) => {
+      if (err) {
+        res.status(500).json({ error: err });
+      } else {
+        try {
+          let {
+            firstname,
+            lastname,
+            email,
+            address,
+            password,
+            passwordConfirm
+          } = req.body;
+
+          let passwordCon = req.body.passwordConfirm;
+
+          console.log(passwordCon);
+
+          console.log(password.localeCompare(passwordCon));
+
+          // var passwordRegex = new RegExp(
+          //   "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})"
+          // );
+          // const nameRegex = new RegExp("^[_A-z]*((-|s)*[_A-z])*$");
+
+          // req.checkBody("firstname", "firstname is required").notEmpty();
+          // req
+          //   .checkBody("firstname", "firstname should have juste letters.")
+          //   .matches(nameRegex);
+
+          req.checkBody("email", "Email is required").notEmpty();
+
+          // req.checkBody("lastname", "lastname is required").notEmpty();
+          // req
+          //   .checkBody("lastname", "lastname should have juste letters.")
+          //   .matches(nameRegex);
+
+          // req.checkBody("address", "address is required").notEmpty();
+
+          // req.checkBody("password", "password is required").notEmpty();
+          // req
+          //   .checkBody(
+          //     "password",
+          //     "password should have at least , one uppercase , lowercase and a number and at least 8 chars"
+          //   )
+          //   .matches(passwordRegex);
+
+          // req
+          //   .checkBody("passwordConfirm", "password2 is required")
+          //   .notEmpty();
+          // req
+          //   .checkBody("passwordConfirm", "passwords do not match")
+          //   .equals(password);
+
+          let errors = req.validationErrors();
+
+          if (errors) {
+            res.status(409).json({ message: errors });
+          } else {
+            //  console.log(password.match(passwordRegex))
+            let user = {
               firstname,
               lastname,
               email,
               address,
               password,
               passwordConfirm
-            } = req.body;
+            };
 
-            let passwordCon = req.body.passwordConfirm;
+            // user.password = hash;
 
-            console.log(passwordCon);
+            console.log(user);
 
-            console.log(password.localeCompare(passwordCon));
-
-            // var passwordRegex = new RegExp(
-            //   "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})"
-            // );
-            // const nameRegex = new RegExp("^[_A-z]*((-|s)*[_A-z])*$");
-
-            // req.checkBody("firstname", "firstname is required").notEmpty();
-            // req
-            //   .checkBody("firstname", "firstname should have juste letters.")
-            //   .matches(nameRegex);
-
-            req.checkBody("email", "Email is required").notEmpty();
-
-            // req.checkBody("lastname", "lastname is required").notEmpty();
-            // req
-            //   .checkBody("lastname", "lastname should have juste letters.")
-            //   .matches(nameRegex);
-
-            // req.checkBody("address", "address is required").notEmpty();
-
-            // req.checkBody("password", "password is required").notEmpty();
-            // req
-            //   .checkBody(
-            //     "password",
-            //     "password should have at least , one uppercase , lowercase and a number and at least 8 chars"
-            //   )
-            //   .matches(passwordRegex);
-
-            // req
-            //   .checkBody("passwordConfirm", "password2 is required")
-            //   .notEmpty();
-            // req
-            //   .checkBody("passwordConfirm", "passwords do not match")
-            //   .equals(password);
-
-            let errors = req.validationErrors();
-
-            if (errors) {
-              res.status(409).json({ message: errors });
-            } else {
-              //  console.log(password.match(passwordRegex))
-              let user = {
-                firstname,
-                lastname,
-                email,
-                address,
-                password,
-                passwordConfirm
-              };
-
-              // user.password = hash;
-
-              console.log(user);
-
-              try {
-                // let data = user.save();
-                User.create(user)
-                  .then(u => {
-                    // console.log("user db is ", u);
-                    res.status(200).send({
-                      message: "user created",
-                      user_id: u.id,
-                      user: user,
-                      token: tokenForUser(u)
-                    });
-                  })
-                  .catch(err => {
-                    res.status(400).json({ err: err.message });
+            try {
+              // let data = user.save();
+              User.create(user)
+                .then(u => {
+                  // console.log("user db is ", u);
+                  res.status(200).send({
+                    message: "user created",
+                    user_id: u.id,
+                    user: user,
+                    token: tokenForUser(u)
                   });
+                })
+                .catch(err => {
+                  res.status(400).json({ err: err.message });
+                });
 
-                // > send token to response
-                // res.status(200).json({
-                //   message: "user created",
-                //   user_id: "",
-                //   user: user,
-                //   token: tokenForUser(user)
-                // });
-                // res.redirect ('/api/users/login')
-              } catch (err) {
-                res.status(500).json({ error: err });
-              }
+              // > send token to response
+              // res.status(200).json({
+              //   message: "user created",
+              //   user_id: "",
+              //   user: user,
+              //   token: tokenForUser(user)
+              // });
+              // res.redirect ('/api/users/login')
+            } catch (err) {
+              res.status(500).json({ error: err });
             }
-          } catch (err) {
-            console.log(err);
           }
+        } catch (err) {
+          console.log(err);
         }
-      });
+      }
+      // });
     }
   });
 };
