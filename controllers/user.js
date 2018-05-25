@@ -1,6 +1,22 @@
 import { User } from "../models";
 import bcrypt from "bcrypt";
 import passport from "passport";
+import jwt from "jwt-simple";
+import { secret } from "../config";
+
+// > Generate the token here
+// -----------------------------------
+function tokenForUser(user) {
+  console.log("config is", secret);
+  let timespam = new Date().getTime();
+  return jwt.encode(
+    {
+      sub: user.id,
+      iat: timespam
+    },
+    secret
+  );
+}
 
 exports.get_user = async (req, res) => {
   try {
@@ -13,8 +29,16 @@ exports.get_user = async (req, res) => {
     });
   }
 };
+
+exports.user_protected = async (req, res, next) => {
+  res.send("Hello this is secret");
+};
+
+// > User Sign Up
+// -------------------------------------------
 exports.user_signup = (req, res) => {
   let email = req.body.email;
+  // console.log(req.body);
   // let user = new User({ firstname, lastname, email });
   // console.log("madjid",user);
   console.log(email);
@@ -29,42 +53,54 @@ exports.user_signup = (req, res) => {
           res.status(500).json({ error: err });
         } else {
           try {
-            let { firstname, lastname, email, address, password } = req.body;
-            let passwordConfirm = req.body.passwordConfirm;
-            console.log(passwordConfirm);
-            console.log(password.localeCompare(passwordConfirm));
-            var passwordRegex = new RegExp(
-              "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})"
-            );
-            const nameRegex = new RegExp("^[_A-z]*((-|s)*[_A-z])*$");
-            req.checkBody("firstname", "firstname is required").notEmpty();
-            req
-              .checkBody("firstname", "firstname should have juste letters.")
-              .matches(nameRegex);
+            let {
+              firstname,
+              lastname,
+              email,
+              address,
+              password,
+              passwordConfirm
+            } = req.body;
+
+            let passwordCon = req.body.passwordConfirm;
+
+            console.log(passwordCon);
+
+            console.log(password.localeCompare(passwordCon));
+
+            // var passwordRegex = new RegExp(
+            //   "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})"
+            // );
+            // const nameRegex = new RegExp("^[_A-z]*((-|s)*[_A-z])*$");
+
+            // req.checkBody("firstname", "firstname is required").notEmpty();
+            // req
+            //   .checkBody("firstname", "firstname should have juste letters.")
+            //   .matches(nameRegex);
 
             req.checkBody("email", "Email is required").notEmpty();
 
-            req.checkBody("lastname", "lastname is required").notEmpty();
-            req
-              .checkBody("lastname", "lastname should have juste letters.")
-              .matches(nameRegex);
+            // req.checkBody("lastname", "lastname is required").notEmpty();
+            // req
+            //   .checkBody("lastname", "lastname should have juste letters.")
+            //   .matches(nameRegex);
 
-            req.checkBody("address", "address is required").notEmpty();
+            // req.checkBody("address", "address is required").notEmpty();
 
-            req.checkBody("password", "password is required").notEmpty();
-            req
-              .checkBody(
-                "password",
-                "password should have at least , one uppercase , lowercase and a number and at least 8 chars"
-              )
-              .matches(passwordRegex);
+            // req.checkBody("password", "password is required").notEmpty();
+            // req
+            //   .checkBody(
+            //     "password",
+            //     "password should have at least , one uppercase , lowercase and a number and at least 8 chars"
+            //   )
+            //   .matches(passwordRegex);
 
-            req
-              .checkBody("passwordConfirm", "password2 is required")
-              .notEmpty();
-            req
-              .checkBody("passwordConfirm", "passwords do not match")
-              .equals(password);
+            // req
+            //   .checkBody("passwordConfirm", "password2 is required")
+            //   .notEmpty();
+            // req
+            //   .checkBody("passwordConfirm", "passwords do not match")
+            //   .equals(password);
 
             let errors = req.validationErrors();
 
@@ -72,23 +108,42 @@ exports.user_signup = (req, res) => {
               res.status(409).json({ message: errors });
             } else {
               //  console.log(password.match(passwordRegex))
-              let user = new User({
+              let user = {
                 firstname,
                 lastname,
                 email,
                 address,
-                password
-              });
-              user.password = hash;
+                password,
+                passwordConfirm
+              };
 
-              // console.log(user)
+              // user.password = hash;
+
+              console.log(user);
+
               try {
-                let data = user.save();
+                // let data = user.save();
+                User.create(user)
+                  .then(u => {
+                    // console.log("user db is ", u);
+                    res.status(200).send({
+                      message: "user created",
+                      user_id: u.id,
+                      user: user,
+                      token: tokenForUser(u)
+                    });
+                  })
+                  .catch(err => {
+                    res.status(400).json({ err: err.message });
+                  });
 
-                res.status(200).json({
-                  message: "user created",
-                  user: user
-                });
+                // > send token to response
+                // res.status(200).json({
+                //   message: "user created",
+                //   user_id: "",
+                //   user: user,
+                //   token: tokenForUser(user)
+                // });
                 // res.redirect ('/api/users/login')
               } catch (err) {
                 res.status(500).json({ error: err });
@@ -102,56 +157,63 @@ exports.user_signup = (req, res) => {
     }
   });
 };
+
+// > User Login
+// ----------------------------------------------
 exports.user_login = (req, res, next) => {
-  passport.authenticate("local", {
-    successRedirect: "/api/",
-    failureRedirect: "/api/users/login"
-  })(req, res, next);
+  let user = req.user;
+
+  console.log("user login -->", user);
+
+  res.send({
+    token: tokenForUser(user),
+    user_id: user.id
+  });
 };
 
-exports.user_informations = async (req, res, next) => {
-  try {
-    let user = await User.find({ where: { id: req.params.id } });
-    if (user) {
-      res.status(200).json({
-        message: "there are your information",
-        user: user
-      });
-    } else {
-      console.log("merde");
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
+// exports.user_informations = async (req, res, next) => {
+//   try {
+//     let user = await User.find({ where: { id: req.params.id } });
+//     if (user) {
+//       res.status(200).json({
+//         message: "there are your information",
+//         user: user
+//       });
+//     } else {
+//       console.log("merde");
+//     }
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
 // probleme de l'updtae a soulever demain avec majdi
 
-exports.user_update_info = async (req, res, next) => {
-  const id = req.params.id;
-  // console.log(req.body)
+// exports.user_update_info = async (req, res, next) => {
+//   const id = req.params.id;
+//   // console.log(req.body)
 
-  const updateOps = {};
-  for (const [key, value] of Object.entries(req.body)) {
-    updateOps[key] = value;
-  }
+//   const updateOps = {};
+//   for (const [key, value] of Object.entries(req.body)) {
+//     updateOps[key] = value;
+//   }
 
-  User.update(updateOps, { where: { id: req.params.id } })
-    .then(result => {
-      console.log(result);
-      console.log(result);
-      res.status(200).json({
-        message: "prodcut updated",
-        request: {
-          type: "GET",
-          desc: "view the product",
-          url: "http://localhost:3000/products/" + id
-        }
-      });
-    })
-    .catch(err => {
-      res.status(500).json({ error: err });
-    });
+//   User.update(updateOps, { where: { id: req.params.id } })
+//     .then(result => {
+//       console.log(result);
+//       console.log(result);
+//       res.status(200).json({
+//         message: "prodcut updated",
+//         request: {
+//           type: "GET",
+//           desc: "view the product",
+//           url: "http://localhost:3000/products/" + id
+//         }
+//       });
+//     })
+//     .catch(err => {
+//       res.status(500).json({ error: err });
+//     });
 
-  // console.log(Array.isArray(ar));
-};
+//   // console.log(Array.isArray(ar));
+// };
