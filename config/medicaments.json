@@ -1,0 +1,30 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "Nom": "DOLIPRANE ",
+      "Description": "1 000 mg Comprimé boîte de 8",
+      "Posologie":
+        "Traitement symptomatique des douleurs d'intensité légère à modérée et/ou des états fébriles. Traitement symptomatique des douleurs de l'arthrose. Cette présentation est réservée à l'adulte et à l'enfant à partir de 50 kg (soit à partir d'environ 15 ans).",
+      "Prix": 6
+    },
+    {
+      "id": 2,
+      "Nom": "FERVEX ",
+      "Description":
+        "ETAT GRIPPAL PARACETAMOL/VITAMINE C/PHENIRAMINE ADULTES, granulés pour solution buvable en sachet, sachets boîte de 8",
+      "Posologie":
+        "Ce médicament est indiqué dans le traitement au cours des rhumes, rhinites, rhinopharyngites et des états grippaux de l'adulte (à partir de 15 ans):   de l'écoulement nasal clair et des larmoiements, des éternuements, des maux de tête et/ou fièvre.",
+      "Prix": 5.99
+    },
+    {
+      "id": 3,
+      "Nom": "MAALOX",
+      "Description":
+        "MAUX D'ESTOMAC, comprimé à croquer Hydroxyde de magnésium/Hydroxyde d'aluminium",
+      "Posologie":
+        "Ce médicament est indiqué chez l'adulte et l'enfant de plus de 15 ans dans les brûlures d'estomac et remontées acides.",
+      "Prix": 7.5
+    }
+  ]
+}
