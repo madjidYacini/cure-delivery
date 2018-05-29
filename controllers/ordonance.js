@@ -20,7 +20,7 @@ exports.insert_data = async (req, res)=>{
            const ord = { image: image64, numsecu: num_secu };
        
         console.log(ord)
-        Ordonances.create({ image: image64, numsecu: num_secu })
+        Ordonances.create(ord)
           .then(result => {
             res
               .status(200)
