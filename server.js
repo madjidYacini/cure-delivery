@@ -31,6 +31,7 @@ app.use(
     }
   })
 );
+
 require("./middleware/passport");
 
 app.use(passport.initialize());
@@ -46,7 +47,7 @@ app.use(
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extend: true }));
-// {force:true}
+
 db.sequelize.sync().then(() => {
   app.use("/api", routes);
 
