@@ -1,12 +1,14 @@
-import { Router } from 'express'
-import user from './user'
+import { Router } from "express";
+import user from "./user";
+import ordonance from "./ordonance";
 
-let api = Router()
+let api = Router();
 
-api.get('/', (req, res) => {
-  res.json({ hi: 'startupWeek API' })
-})
+api.get("/", (req, res) => {
+  res.json({ hi: "startupWeek API" });
+});
 
-api.use('/users', user)
+api.use("/users", user);
+api.use("/ordonances", ordonance);
 
-export default api
+export default api;
