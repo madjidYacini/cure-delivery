@@ -46,10 +46,7 @@ exports.user_signup = (req, res) => {
     if (user) {
       return res.status(409).json({ message: "user already exists" });
     } else {
-      // bcrypt.hash(req.body.password, 10, (err, hash) => {
-      // if (err) {
-      //   res.status(500).json({ error: err });
-      // } else {
+     
       try {
         let {
           firstname,
@@ -160,6 +157,7 @@ exports.user_login = (req, res, next) => {
   });
 };
 
+// ----------> get user information
 exports.user_informations = async (req, res, next) => {
   try {
     let user = await User.find({ where: { id: req.params.id } });
@@ -176,20 +174,24 @@ exports.user_informations = async (req, res, next) => {
   }
 };
 
-User.update(updateOps, { where: { id: req.params.id } })
-  .then(result => {
-    console.log(result);
-    console.log(result);
-    res.status(200).json({
-      message: "profil updated"
-    });
-  })
-  .catch(err => {
-    res.status(500).json({ error: err });
-  });
+
+// ------------> update information's user
+
+// User.update(updateOps, { where: { id: req.params.id } })
+//   .then(result => {
+//     console.log(result);
+//     console.log(result);
+//     res.status(200).json({
+//       message: "profil updated"
+//     });
+//   })
+//   .catch(err => {
+//     res.status(500).json({ error: err });
+//   });
 
 
 
+// ---------> password update 
 
 exports.user_update_password = async (req, res, next) => {
   const id = req.params.id;

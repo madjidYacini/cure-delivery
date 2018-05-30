@@ -1,6 +1,10 @@
 // const medicament = require("../config/medicaments.json");
 import { Commande } from "../models";
 
+
+
+    // ==========>> insert the command
+
 exports.store_commande = (req,res)=>{
     console.log(req.params)
     let {id,pid,ordid }= req.params;
@@ -15,7 +19,6 @@ exports.store_commande = (req,res)=>{
     }
 
 
-    // insert the command
     Commande.create(commande)
     .then((commande) => {
        if (!commande) {

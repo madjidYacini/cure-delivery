@@ -1,9 +1,12 @@
 import {Pharmacie }from "../models";
 
+
+// --------> set pharmacy in database 
+
 exports.set_pharmacy = (req,res)=>{
 
     let {nom , address } = req.body
-    // console.log(nom , address);
+   
     const pharmacy = {
         nom ,
         address

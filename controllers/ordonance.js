@@ -1,5 +1,8 @@
 const medicament = require("../config/medicaments.json");
 import { Ordonances } from "../models";
+
+// --------> display some drugs 
+
 exports.display = (req, res) => {
   try {
    
@@ -10,6 +13,9 @@ exports.display = (req, res) => {
     console.log(error);
   }
 };
+
+
+// ----------> insert  data into database "ordonance"
 
 exports.insert_data = async (req, res)=>{
     let {num_secu, image64}= req.body
