@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     address: {
-      type: DataTypes.INTEGER
+      type: DataTypes.STRING
     }
   });
 
