@@ -22,16 +22,21 @@ exports.insert_data = async (req, res)=>{
         console.log(ord)
         Ordonances.create(ord)
           .then(result => {
-            res
-              .status(200)
-              .json({
+            if (!result){
+              res.status(400).json({
+                message :"there was an error while executing the request"
+              })
+            }else{
+            res.status(200).json({
                 message: "product added",
                 product: result
               });
+            }
           })
+        
           .catch(err => {
             res.status(500).json({ error: err.message });
-            console.log(err.message);
+         
           });
    
 }
