@@ -14,7 +14,7 @@ api.get("/protect", passportAuth, UserControllers.user_protected);
 
 api.post("/signup", UserControllers.user_signup);
 api.post("/login", [requireLogin, UserControllers.user_login]);
-api.get("/:id", UserControllers.user_informations);
+api.get("/:id", passportAuth, UserControllers.user_informations);
 // api.patch("/:id", UserControllers.user_update_info);
-api.patch("/password/:id", UserControllers.user_update_password);
+api.patch("/password/:id", passportAuth, UserControllers.user_update_password);
 export default api;
