@@ -58,7 +58,6 @@ app.use((req,res,next)=>{
 })
 db.sequelize.sync({}).then(() => {
   app.use("/api", routes);
-
   app.listen(process.env.PORT, err => {
     if (err) {
       console.log(err.red);
