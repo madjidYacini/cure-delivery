@@ -7,5 +7,5 @@ const passportAuth = passport.authenticate("jwt", { session: false });
 let api = Router();
 
 api.get("/", OrdonanceControllers.display);
-api.post("/insert", OrdonanceControllers.insert_data);
+api.post("/insert",  OrdonanceControllers.insert_data);
 export default api;
