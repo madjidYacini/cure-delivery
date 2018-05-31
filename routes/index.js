@@ -3,7 +3,8 @@ import user from "./user";
 import ordonance from "./ordonance";
 import commande from "./commande";
 import pharmacie from "./pharmacie";
-
+import dotenv from "dotenv";
+dotenv.config();
 let api = Router();
 
 api.get("/", (req, res) => {
