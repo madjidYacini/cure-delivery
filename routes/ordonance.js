@@ -6,6 +6,6 @@ import passportService from "../middleware/passport";
 const passportAuth = passport.authenticate("jwt", { session: false });
 let api = Router();
 
-api.get("/",passportAuth, OrdonanceControllers.display);
-api.post("/insert", OrdonanceControllers.insert_data);
+api.get("/", OrdonanceControllers.display);
+api.post("/insert", passportAuth, OrdonanceControllers.insert_data);
 export default api;
