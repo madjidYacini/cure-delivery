@@ -16,6 +16,6 @@ api.get("/", (req, res) => {
 
 api.use("/users", user);
 api.use("/ordonances", ordonance);
-api.use ('/commande',passportAuth,commande);
-api.use('/pharmacie',passportAuth,pharmacie);
+api.use ('/commande',commande);
+api.use('/pharmacie',pharmacie);
 export default api;
