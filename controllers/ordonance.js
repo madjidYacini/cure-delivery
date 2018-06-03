@@ -1,7 +1,27 @@
 const medicament = require("../config/medicaments.json");
 import { Ordonances } from "../models";
+import crypto from"crypto";
+import dotenv from "dotenv";
+dotenv.config();
 
-// --------> display some drugs 
+  let algorithm =  process.env.ALGORITHM,
+  password = process.env.PASSWORD;
+
+// --------> encrypt data  
+function encrypt(text) {
+  console.log(password);
+  var cipher = crypto.createCipher(algorithm, password);
+  var crypted = cipher.update(text, "utf8", "hex");
+  crypted += cipher.final("hex");
+  return crypted;
+}
+// ---------> decrypt data 
+function decrypt(text) {
+  var decipher = crypto.createDecipher(algorithm, password);
+  var dec = decipher.update(text, "hex", "utf8");
+  dec += decipher.final("utf8");
+  return dec;
+}
 
 exports.display = (req, res) => {
   try {
@@ -20,9 +40,10 @@ exports.display = (req, res) => {
 exports.insert_data = async (req, res)=>{
     let {num_secu, image64}= req.body
    
-    console.log(num_secu, image64);
+    let num_secu_crypt = encrypt(num_secu);    
+    let image_crypt = encrypt(image64)
         
-           const ord = { image: image64, numsecu: num_secu };
+           const ord = { image: image_crypt, numsecu: num_secu_crypt };
        
         console.log(ord)
         Ordonances.create(ord)

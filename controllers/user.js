@@ -175,20 +175,6 @@ exports.user_informations = async (req, res, next) => {
 };
 
 
-// ------------> update information's user
-
-// User.update(updateOps, { where: { id: req.params.id } })
-//   .then(result => {
-//     console.log(result);
-//     console.log(result);
-//     res.status(200).json({
-//       message: "profil updated"
-//     });
-//   })
-//   .catch(err => {
-//     res.status(500).json({ error: err });
-//   });
-
 
 
 // ---------> password update 
